@@ -21,14 +21,14 @@ public class Main {
         System.out.println("Today is: " + today);
         System.out.println("To complete the entry, enter \"end\" or press Enter on an empty line.");
         while (true) {
-            System.out.println("Enter a date \"dd-MM-yyyy\": ");
+            System.out.println("Enter a date \"day-month-year\": ");
             String s = scan.nextLine();
             Date d = null;
             if (s.equals("end") || s.equals("")) {
                 break;
             }
             try {
-                d = new SimpleDateFormat("dd-MM-yyyy").parse(s);
+                d = new SimpleDateFormat("d-M-y").parse(s);
             } catch (ParseException e) {
                 System.out.println("********** The wrong date and time format. The value is not added. Please try again. **********");
             }
@@ -40,8 +40,8 @@ public class Main {
         }
 
         Calendar cal = Calendar.getInstance();
-        for (int i = 0; i < dateList.size(); i++) {
-            cal.setTime(dateList.get(i));
+        for (Date aDateList : dateList) {
+            cal.setTime(aDateList);
             longList.add(cal.getTimeInMillis());
         }
 
@@ -60,11 +60,26 @@ public class Main {
         printDate(requiredList);
 
         System.out.println("\nSum of days: " + sum + ".");
+        int legalDays;
+        Date date = new Date();
         if (sum < 90) {
-            System.out.println ("\nThe person is in the country legally and he has " + (90 - sum) + " days to be there.");
+            legalDays = 90 - sum;
+
+            Calendar calendar = Calendar.getInstance();
+            setTimeZero(calendar);
+            calendar.set(Calendar.DAY_OF_YEAR, -legalDays);
+            date.setTime(calendar.getTimeInMillis());
+            System.out.println("\nThe person is in the country legally and he has " + legalDays + " days to be there. " +
+                    "Date of end of term: " + date + ".");
         } else {
             if (sum >= 90) {
-                System.out.println ("\nThe person is illegally in the country for " + (sum - 90) + " days. Person must be deported.");
+                legalDays = sum - 90;
+
+                Calendar calendar = Calendar.getInstance();
+                setTimeZero(calendar);
+                calendar.set(Calendar.DAY_OF_YEAR, -legalDays);
+                date.setTime(calendar.getTimeInMillis());
+                System.out.println("\n!!! The person is illegally in the country for " + legalDays + " days. The tenure ended " + date + ". Person must be deported.");
             }
         }
     }
@@ -76,10 +91,7 @@ public class Main {
     public static long before180(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        setTimeZero(cal);
         cal.add(Calendar.DAY_OF_YEAR, -180);
         return cal.getTimeInMillis();
     }
@@ -87,10 +99,7 @@ public class Main {
     public static long dateToLong(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        setTimeZero(cal);
         return cal.getTimeInMillis();
     }
 
@@ -98,7 +107,7 @@ public class Main {
         List<Long> longs = new ArrayList<Long>();
         boolean needAdd = true;
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i) > before180) {
+            if (list.get(i) >= before180) {
                 if (i % 2 != 0 && needAdd) {
                     longs.add(before180);
                     needAdd = false;
@@ -125,5 +134,12 @@ public class Main {
             System.out.println(d);
         }
 
+    }
+
+    public static void setTimeZero(Calendar c) {
+        c.set(Calendar.HOUR, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
     }
 }
