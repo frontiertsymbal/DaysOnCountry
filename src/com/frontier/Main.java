@@ -7,6 +7,7 @@ import java.util.*;
 public class Main {
 
     private static final int MILLIS_IN_DAY = 86400000;
+    private static final int DECLARED_DAYS = 180;
     private static Scanner scan = new Scanner(System.in);
     private static Long before180;
     private static Long todayLong;
@@ -62,8 +63,8 @@ public class Main {
         System.out.println("\nSum of days: " + sum + ".");
         int legalDays;
         Date date = new Date();
-        if (sum < 90) {
-            legalDays = 90 - sum;
+        if (sum < (DECLARED_DAYS / 2)) {
+            legalDays = (DECLARED_DAYS / 2) - sum;
 
             Calendar calendar = Calendar.getInstance();
             setTimeZero(calendar);
@@ -72,8 +73,8 @@ public class Main {
             System.out.println("\nThe person is in the country legally and he has " + legalDays + " days to be there. " +
                     "Date of end of term: " + date + ".");
         } else {
-            if (sum >= 90) {
-                legalDays = sum - 90;
+            if (sum >= (DECLARED_DAYS / 2)) {
+                legalDays = sum - (DECLARED_DAYS / 2);
 
                 Calendar calendar = Calendar.getInstance();
                 setTimeZero(calendar);
@@ -92,7 +93,7 @@ public class Main {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         setTimeZero(cal);
-        cal.add(Calendar.DAY_OF_YEAR, -180);
+        cal.add(Calendar.DAY_OF_YEAR, -DECLARED_DAYS);
         return cal.getTimeInMillis();
     }
 
@@ -105,16 +106,16 @@ public class Main {
 
     public static List<Long> getListOfRequiredLong(List<Long> list) {
         List<Long> longs = new ArrayList<Long>();
-        boolean needAdd = true;
+        boolean needAddBefore180 = true;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i) >= before180) {
-                if (i % 2 != 0 && needAdd) {
+                if (i % 2 != 0 && needAddBefore180) {
                     longs.add(before180);
-                    needAdd = false;
+                    needAddBefore180 = false;
                 }
                 if (todayLong >= list.get(i)) {
                     longs.add(list.get(i));
-                    needAdd = false;
+                    needAddBefore180 = false;
                 }
             }
         }
@@ -128,18 +129,18 @@ public class Main {
     }
 
     public static void printDate(List<Long> list) {
-        for (Long l : list) {
+        for (Long longs : list) {
             Date d = new Date();
-            d.setTime(l);
+            d.setTime(longs);
             System.out.println(d);
         }
 
     }
 
-    public static void setTimeZero(Calendar c) {
-        c.set(Calendar.HOUR, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
+    public static void setTimeZero(Calendar cal) {
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
     }
 }
