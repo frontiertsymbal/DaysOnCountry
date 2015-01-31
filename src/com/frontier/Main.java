@@ -59,7 +59,7 @@ public class Main {
         System.out.println("\nRequired date: ");
         printDate(requiredList);
 
-        System.out.println("\nSum of days: " + sum);
+        System.out.println("\nSum of days: " + sum + ".");
         if (sum < 90) {
             System.out.println ("\nThe person is in the country legally and he has " + (90 - sum) + " days to be there.");
         } else {
